@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct TimepageApp: App {
+    
+    private let parameters = appParameters()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
-        }
+            ContentView().environmentObject(parameters)
+        }.windowStyle(HiddenTitleBarWindowStyle())
     }
 }
