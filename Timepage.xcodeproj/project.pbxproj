@@ -12,10 +12,11 @@
 		BD79F8D725DF99C700097FA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD79F8D625DF99C700097FA3 /* Assets.xcassets */; };
 		BD79F8DA25DF99C700097FA3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD79F8D925DF99C700097FA3 /* Preview Assets.xcassets */; };
 		BD79F8E425DF9B9F00097FA3 /* Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8E325DF9B9E00097FA3 /* Parameters.swift */; };
-		BD79F8E725DF9C4A00097FA3 /* CalendarListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8E625DF9C4A00097FA3 /* CalendarListView.swift */; };
 		BD79F8EB25DF9E3400097FA3 /* MonthlyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8EA25DF9E3400097FA3 /* MonthlyView.swift */; };
 		BD79F8EE25DF9E6D00097FA3 /* DailyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8ED25DF9E6D00097FA3 /* DailyView.swift */; };
 		BD79F8F125DF9E9700097FA3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8F025DF9E9700097FA3 /* SettingsView.swift */; };
+		BD79F8F425DF9F0E00097FA3 /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8F325DF9F0E00097FA3 /* Structs.swift */; };
+		BD79F8F825DFC28F00097FA3 /* CalendarListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8E625DF9C4A00097FA3 /* CalendarListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		BD79F8EA25DF9E3400097FA3 /* MonthlyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyView.swift; sourceTree = "<group>"; };
 		BD79F8ED25DF9E6D00097FA3 /* DailyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyView.swift; sourceTree = "<group>"; };
 		BD79F8F025DF9E9700097FA3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BD79F8F325DF9F0E00097FA3 /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				BD79F8EA25DF9E3400097FA3 /* MonthlyView.swift */,
 				BD79F8ED25DF9E6D00097FA3 /* DailyView.swift */,
 				BD79F8F025DF9E9700097FA3 /* SettingsView.swift */,
+				BD79F8F325DF9F0E00097FA3 /* Structs.swift */,
 				BD79F8D625DF99C700097FA3 /* Assets.xcassets */,
 				BD79F8DB25DF99C700097FA3 /* Info.plist */,
 				BD79F8DC25DF99C700097FA3 /* Timepage.entitlements */,
@@ -155,11 +158,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD79F8F425DF9F0E00097FA3 /* Structs.swift in Sources */,
 				BD79F8F125DF9E9700097FA3 /* SettingsView.swift in Sources */,
+				BD79F8F825DFC28F00097FA3 /* CalendarListView.swift in Sources */,
 				BD79F8EE25DF9E6D00097FA3 /* DailyView.swift in Sources */,
 				BD79F8D525DF99C500097FA3 /* ContentView.swift in Sources */,
 				BD79F8D325DF99C500097FA3 /* TimepageApp.swift in Sources */,
-				BD79F8E725DF9C4A00097FA3 /* CalendarListView.swift in Sources */,
 				BD79F8E425DF9B9F00097FA3 /* Parameters.swift in Sources */,
 				BD79F8EB25DF9E3400097FA3 /* MonthlyView.swift in Sources */,
 			);

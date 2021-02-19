@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct MonthlyView: View {
+    
+    @Environment(\.calendar) var calendar
+    
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
