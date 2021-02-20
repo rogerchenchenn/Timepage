@@ -19,6 +19,13 @@ extension Date{
     }
 }
 
+//extension Text{
+//    func GravesendSans(size : CGFloat)->Text{
+//        self
+//            .font(.custom("Gravesend Sanss", size: size))
+//    }
+//}
+
 enum weekDays:String, CaseIterable{
     case Sunday = "SUN"
     case Monday = "MON"

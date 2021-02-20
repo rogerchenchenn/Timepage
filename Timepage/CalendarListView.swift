@@ -18,9 +18,13 @@ struct CalendarListView: View {
                 ZStack{
                 HStack(spacing: 0){
                     Text("\(Date().format("MMMM yyyy").uppercased())")
-                        .frame(width:200)
+//                        .GravesendSans(size: 14)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .kerning(7)
+                        .frame(width:400)
                         .rotationEffect(.degrees(270))
-                        .foregroundColor(.white).frame(width:30)
+                        .foregroundColor(parameters.highlightColor).frame(width:30)
                     ScrollView(showsIndicators: false){
                         LazyVStack(spacing:0){
                             ForEach(-60..<60){ offsetDay in
@@ -31,15 +35,16 @@ struct CalendarListView: View {
                 }
                 VStack{
                     Spacer()
-                    Circle().foregroundColor(.yellow).overlay(Image(systemName: "chevron.up").font(.system(size: 30, weight: .thin, design: .default)).foregroundColor(.white)).onTapGesture {
-                        withAnimation(.spring()){
-                        scroll.scrollTo(0, anchor: .center)
+                    Circle().foregroundColor(parameters.highlightColor).overlay(Image(systemName: "chevron.up").font(.system(size: 30, weight: .thin, design: .default)).foregroundColor(.white)).onTapGesture {
+                        withAnimation(.default){
+                            scroll.scrollTo(0, anchor: .center)
+                            pushViewingDate.send(-1)
                         }
                     }.frame(width:50, height: 50).padding(.bottom, 20)
                 }
             }
             }
-        }.background(Color.black)
+        }
     }
     
     func getDay( _ offset: Int)->Date{
@@ -77,15 +82,15 @@ struct DayView: View {
         
         return HStack(spacing: 0){
             VStack{
-                Text(date.format("E"))
-                Text(date.format("d"))
-            }.foregroundColor(isToday ? .yellow : .white)
+                Text(date.format("E").uppercased()).font(.caption2).opacity(0.8)
+                Text(date.format("d")).font(.title2)
+            }.foregroundColor(isToday ? parameters.highlightColor : .white)
             .padding(.horizontal, 5)
             .frame(minWidth: 50,maxHeight:.infinity)
             .background(Color.black)
             
             if isToday{
-                Capsule().frame(width:2).foregroundColor(.yellow).offset(x:-1)
+                Capsule().frame(width:2).foregroundColor(parameters.highlightColor).offset(x:-1)
             }
             
             if !events.isEmpty{
@@ -94,7 +99,7 @@ struct DayView: View {
                 Spacer()
             }
             
-        }.frame(height: 100).background(Color.gray).overlay(VStack{
+        }.frame(height: 100).background(parameters.baseColor).overlay(VStack{
             Spacer()
             Rectangle().frame(height:0.5).foregroundColor(.black).opacity(0.3)
         })
@@ -105,13 +110,25 @@ struct DayView: View {
     
     var eventBlock: some View{
         HStack(spacing: 5){
-            Capsule().frame(width: 6, height: 30).foregroundColor(.red)
+            Capsule().frame(width: 6, height: 30).foregroundColor(.init(events[currentIndex].calendar.cgColor))
             VStack(alignment: .leading){
-                Text(events[currentIndex].title)
+                Text(events[currentIndex].title).font(.title2).fontWeight(.light).lineLimit(1)
                 if events[currentIndex].isAllDay{
                     Text("ALL DAY")
+                        .fontWeight(.light).font(.caption2)
                 }else{
-                    Text("\(events[currentIndex].startDate.format("HH:mm")) → \(events[currentIndex].endDate.format("HH:mm"))")
+                    HStack(spacing: 0){
+                        Group{
+                            Text(events[currentIndex].startDate.format("HH:mm a")).fontWeight(.light)
+                            Text(" ⟶ ").baselineOffset(2).fontWeight(.light)
+                            Text(events[currentIndex].endDate.format("HH:mm a")).fontWeight(.light)
+                            
+                            if events[currentIndex].location != nil{
+                                Text("  \(events[currentIndex].location!)").fontWeight(.light).lineLimit(1)
+                            }
+                        }
+                        .font(.caption2)
+                    }
                 }
             }.foregroundColor(.white).frame(maxHeight:.infinity)
             Spacer()
@@ -119,8 +136,8 @@ struct DayView: View {
     }
     
     func getEvents(){
-        print(date.format("MM-dd-yyyy HH:mm"))
-        DispatchQueue.global(qos: .userInitiated).async {
+//        print(date.format("MM-dd-yyyy HH:mm"))
+        DispatchQueue.global(qos: .userInteractive).async {
             var components = DateComponents()
             components.day = 1
             components.second = -1

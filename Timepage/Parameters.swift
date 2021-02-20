@@ -12,11 +12,12 @@ import EventKit
 
 class appParameters: ObservableObject{
     
-    @Published var mainColor: CGColor = CGColor.init(red: 129/255, green: 157/255, blue: 142/255, alpha: 1)
-    @Published var inputString: String = ""
-    @Published var inputMode: colorMode = .Hex
-    @Published var pointer:Int = 0
+    @Published var baseColor: Color = Color.init(.displayP3, red: 82/255, green: 99/255, blue: 105/255, opacity: 1)
+    @Published var highlightColor: Color = Color.init(.displayP3, red: 218/255, green: 185/255, blue: 103/255, opacity: 1)
+    
     @Published var supportedCalendars:[EKCalendar]
+    @Published var isSidebarOpen: Bool = false
+    
     
     
     @Published var EventStore = EKEventStore()
