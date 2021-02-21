@@ -18,6 +18,7 @@
 		BD79F8F425DF9F0E00097FA3 /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8F325DF9F0E00097FA3 /* Structs.swift */; };
 		BD79F8F825DFC28F00097FA3 /* CalendarListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8E625DF9C4A00097FA3 /* CalendarListView.swift */; };
 		BD79F90125E0210600097FA3 /* Calendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F90025E0210600097FA3 /* Calendar.swift */; };
+		BD79F90F25E1796E00097FA3 /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F90E25E1796E00097FA3 /* ScrollView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		BD79F8F025DF9E9700097FA3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BD79F8F325DF9F0E00097FA3 /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
 		BD79F90025E0210600097FA3 /* Calendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calendar.swift; sourceTree = "<group>"; };
+		BD79F90E25E1796E00097FA3 /* ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 				BD79F8ED25DF9E6D00097FA3 /* DailyView.swift */,
 				BD79F8F025DF9E9700097FA3 /* SettingsView.swift */,
 				BD79F8F325DF9F0E00097FA3 /* Structs.swift */,
+				BD79F90E25E1796E00097FA3 /* ScrollView.swift */,
 				BD79F8D625DF99C700097FA3 /* Assets.xcassets */,
 				BD79F8DB25DF99C700097FA3 /* Info.plist */,
 				BD79F8DC25DF99C700097FA3 /* Timepage.entitlements */,
@@ -164,6 +167,7 @@
 				BD79F8F425DF9F0E00097FA3 /* Structs.swift in Sources */,
 				BD79F8F125DF9E9700097FA3 /* SettingsView.swift in Sources */,
 				BD79F8F825DFC28F00097FA3 /* CalendarListView.swift in Sources */,
+				BD79F90F25E1796E00097FA3 /* ScrollView.swift in Sources */,
 				BD79F8EE25DF9E6D00097FA3 /* DailyView.swift in Sources */,
 				BD79F8D525DF99C500097FA3 /* ContentView.swift in Sources */,
 				BD79F90125E0210600097FA3 /* Calendar.swift in Sources */,
