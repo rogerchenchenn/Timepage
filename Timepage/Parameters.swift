@@ -18,7 +18,7 @@ class appParameters: ObservableObject{
     @Published var supportedCalendars:[EKCalendar]
     @Published var isSidebarOpen: Bool = false
     
-    @Published var selectedDate: Date? = nil
+    @Published var selectedDate: Date? = Date()
     
     
     

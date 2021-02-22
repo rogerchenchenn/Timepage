@@ -14,14 +14,24 @@ struct DayOverView: View {
     @EnvironmentObject var parameters: appParameters
     
     @State private var events: [EKEvent] = []
+    let underMonth: Date
     
     var body: some View {
         VStack(alignment: .leading){
             VStack(alignment: .leading){
-                Text(getDateDiscription(parameters.selectedDate)).font(.title2).fontWeight(.bold).foregroundColor(.white)
-                Text(getDateDistance(parameters.selectedDate)).font(.caption).fontWeight(.thin).foregroundColor(.white).opacity(0.8)
-            }.padding(.top, 5)
+                Text(getDateDiscription(parameters.selectedDate))
+                    .font(.title2).fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .kerning(1)
+                Text(getDateDistance(parameters.selectedDate))
+                    .font(.caption).fontWeight(.medium)
+                    .foregroundColor(.white)
+                    .kerning(1)
+                    .opacity(0.6)
+            }.id(getDateDiscription(parameters.selectedDate))
+            .padding(.top, 5)
             .padding(.vertical, 5)
+            .opacity(events.isEmpty ? 0 : 1)
             
             VStack{
                 ForEach(events, id: \.self){ event in
@@ -57,8 +67,8 @@ struct DayOverView: View {
         }else{
             let today = calendar.startOfDay(for: Date())
             let target = calendar.startOfDay(for: date)
-            let component = calendar.compare(target, to: today, toGranularity: .day)
-            let daysApart = component.rawValue
+            let component = calendar.dateComponents( [.day], from: today, to: target)
+            guard let daysApart = component.day else {return "0"}
             if daysApart<0{
                 return "\(abs(daysApart)) DAYS AGO"
             }else{
@@ -68,7 +78,7 @@ struct DayOverView: View {
     }
     
     func getEvents(){
-        guard self.parameters.selectedDate != nil else {
+        guard self.parameters.selectedDate != nil, calendar.isDate(underMonth, equalTo: parameters.selectedDate!, toGranularity: .month) else {
             self.events = []
             return
         }

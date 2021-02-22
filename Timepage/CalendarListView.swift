@@ -12,24 +12,27 @@ struct CalendarListView: View {
     @EnvironmentObject var parameters: appParameters
     @Environment(\.calendar) var calendar
     
-    
+    @State private var localMonth: Int = 0
+    @Binding var currentOffsetMonth: Int
+    let daySpan: Int = 60
     
     var body: some View {
         Group{
+            GeometryReader{ fullView in
             ScrollViewReader{ scroll in
                 ZStack{
                 HStack(spacing: 0){
-                    Text("\(Date().format("MMMM yyyy").uppercased())")
-//                        .GravesendSans(size: 14)
+                    Text("\(getMonth(currentOffsetMonth).format("MMMM yyyy").uppercased())")
                         .font(.body)
                         .fontWeight(.medium)
                         .kerning(7)
                         .frame(width:400)
                         .rotationEffect(.degrees(270))
                         .foregroundColor(parameters.highlightColor).frame(width:30)
-                    ScrollView(showsIndicators: false){
+                        .animation(.spring())
+                    ScrollView(showsIndicators: false, offsetChanged: {updateCurrentPosition($0, fullHeight: fullView.size.height)}){
                         LazyVStack(spacing:0){
-                            ForEach(-60..<60){ offsetDay in
+                            ForEach(-daySpan..<daySpan){ offsetDay in
                                 DayView(date: getDay(offsetDay), isToday: offsetDay==0).id(offsetDay)
                             }
                         }
@@ -40,12 +43,21 @@ struct CalendarListView: View {
                     Circle().foregroundColor(parameters.highlightColor).overlay(Image(systemName: "chevron.up").font(.system(size: 30, weight: .thin, design: .default)).foregroundColor(.white)).onTapGesture {
                         withAnimation(.default){
                             scroll.scrollTo(0, anchor: .center)
-                            pushViewingDate.send(-1)
+                            pushViewingDate.send(0)
                         }
                     }.frame(width:50, height: 50).padding(.bottom, 20)
                 }
+                }.onAppear(){
+                    withAnimation(.default){
+                        scroll.scrollTo(0, anchor: .center)
+                        pushViewingDate.send(-6)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            pushViewingDate.send(0)
+                        }
+                    }
+                }
             }
-            }
+        }
         }
     }
     
@@ -58,6 +70,32 @@ struct CalendarListView: View {
             return Date()
         }
     }
+    func getMonth(_ offSet: Int)-> Date{
+        let offsetDayComponent = DateComponents(month: offSet)
+        if let offsettedDay = calendar.date(byAdding: offsetDayComponent, to: Date()){
+            return calendar.startOfDay(for: offsettedDay)
+        }else{
+            return Date()
+        }
+    }
+    func updateCurrentPosition(_ point: CGPoint , fullHeight: CGFloat){
+        let distance = -point.y/100 - CGFloat(daySpan)
+        let offset = distance + fullHeight/200
+//        print("\(offset) \t \(Int(offset.rounded(.down)))")
+        let offsetDays = Int(offset.rounded(.down))
+        let date = getDay(offsetDays)
+        guard let startOfTarget = calendar.dateInterval(of: .month, for: date)?.start else { return }
+        guard let startOfThisMonth = calendar.dateInterval(of: .month, for: Date())?.start else { return }
+        if let month = calendar.dateComponents([.month], from: startOfThisMonth, to: startOfTarget).month{
+//            print(date.format("MM/dd/yyyy") + "\t \(month)")
+            if month != localMonth{
+                print("from here month = \(month), offset = \(currentOffsetMonth)")
+                localMonth = month
+                pushViewingDate.send(month)
+            }
+            
+        }
+    }
     
     
     
@@ -67,7 +105,7 @@ struct CalendarListView: View {
 
 struct CalendarListView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarListView().environmentObject(appParameters())
+        CalendarListView(currentOffsetMonth: Binding.constant(0)).environmentObject(appParameters())
     }
 }
 
@@ -117,15 +155,13 @@ struct DayView: View {
         })
         .onAppear(perform: getEvents)
         .onReceive(timer){ _ in
-            print("recieved timer")
-
+//            print("recieved timer")
             if events.count<2{
                 timer.upstream.connect().cancel()
                 return
             }
 
             if currentIndex<events.count-1{
-                print("change index")
                 currentIndex += 1
             }else{
                 currentIndex = 0
