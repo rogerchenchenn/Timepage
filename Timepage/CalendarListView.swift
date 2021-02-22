@@ -12,6 +12,8 @@ struct CalendarListView: View {
     @EnvironmentObject var parameters: appParameters
     @Environment(\.calendar) var calendar
     
+    
+    
     var body: some View {
         Group{
             ScrollViewReader{ scroll in
@@ -78,9 +80,12 @@ struct DayView: View {
     @State private var events: [EKEvent] = []
     @State private var currentIndex: Int = 0
     
+    let delayTime: Double = 5
+    let timer = Timer.publish(every: 5,tolerance: 1, on: .main, in: .common).autoconnect()
+    
     var body: some View {
         
-        return HStack(spacing: 0){
+        HStack(spacing: 0){
             VStack{
                 Text(date.format("E").uppercased()).font(.caption2).opacity(0.8)
                 Text(date.format("d")).font(.title2)
@@ -88,51 +93,46 @@ struct DayView: View {
             .padding(.horizontal, 5)
             .frame(minWidth: 50,maxHeight:.infinity)
             .background(Color.black)
+            .onTapGesture {
+                currentIndex += 1
+            }
             
             if isToday{
                 Capsule().frame(width:2).foregroundColor(parameters.highlightColor).offset(x:-1)
             }
-            
+            ZStack{
             if !events.isEmpty{
-                eventBlock
+                EventBlock(event: events[Int(currentIndex)]).id(UUID())
+                    
             }else{
                 Spacer()
             }
-            
-        }.frame(height: 100).background(parameters.baseColor).overlay(VStack{
+            }.animation(.easeInOut(duration: 0.3))
+        }
+        
+        
+        .frame(height: 100).background(parameters.baseColor).overlay(VStack{
             Spacer()
             Rectangle().frame(height:0.5).foregroundColor(.black).opacity(0.3)
         })
         .onAppear(perform: getEvents)
+        .onReceive(timer){ _ in
+            print("recieved timer")
+
+            if events.count<2{
+                timer.upstream.connect().cancel()
+                return
+            }
+
+            if currentIndex<events.count-1{
+                print("change index")
+                currentIndex += 1
+            }else{
+                currentIndex = 0
+            }
+        }
         
         
-    }
-    
-    var eventBlock: some View{
-        HStack(spacing: 5){
-            Capsule().frame(width: 6, height: 30).foregroundColor(.init(events[currentIndex].calendar.cgColor))
-            VStack(alignment: .leading){
-                Text(events[currentIndex].title).font(.title2).fontWeight(.light).lineLimit(1)
-                if events[currentIndex].isAllDay{
-                    Text("ALL DAY")
-                        .fontWeight(.light).font(.caption2)
-                }else{
-                    HStack(spacing: 0){
-                        Group{
-                            Text(events[currentIndex].startDate.format("HH:mm a")).fontWeight(.light)
-                            Text(" ⟶ ").baselineOffset(2).fontWeight(.light)
-                            Text(events[currentIndex].endDate.format("HH:mm a")).fontWeight(.light)
-                            
-                            if events[currentIndex].location != nil{
-                                Text("  \(events[currentIndex].location!)").fontWeight(.light).lineLimit(1)
-                            }
-                        }
-                        .font(.caption2)
-                    }
-                }
-            }.foregroundColor(.white).frame(maxHeight:.infinity)
-            Spacer()
-        }.padding(.leading, 5)
     }
     
     func getEvents(){
@@ -147,10 +147,47 @@ struct DayView: View {
                 DispatchQueue.main.async {
                     withAnimation(.default){
                     self.events = events
+                        currentIndex = 0
                     }
                 }
             }
         }
     }
     
+}
+
+struct EventBlock: View {
+    
+    @Environment(\.calendar) var calendar
+    @EnvironmentObject var parameters: appParameters
+    
+    let event: EKEvent
+    
+    var body: some View{
+        HStack(spacing: 5){
+            Capsule().frame(width: 5, height: 32).foregroundColor(.init(event.calendar.cgColor))
+            VStack(alignment: .leading){
+                Text(event.title).font(.title2).fontWeight(.light).lineLimit(1)
+                if event.isAllDay{
+                    Text("ALL DAY")
+                        .fontWeight(.light).font(.caption2)
+                }else{
+                    HStack(spacing: 0){
+                        Group{
+                            Text(event.startDate.format("HH:mm a")).fontWeight(.light)
+                            Text(" ⟶ ").baselineOffset(2).fontWeight(.light)
+                            Text(event.endDate.format("HH:mm a")).fontWeight(.light)
+                            
+                            if event.location != nil{
+                                Text("  \(event.location!)").fontWeight(.light).lineLimit(1)
+                            }
+                        }
+                        .font(.caption2)
+                    }
+                }
+            }.foregroundColor(.white)
+            Spacer()
+        }
+        .padding(.leading, 10)
+    }
 }

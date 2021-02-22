@@ -83,6 +83,7 @@ struct MonthView<DateView>: View where DateView: View {
     let month: Date
     let showHeader: Bool
     let content: (Date) -> DateView
+    
 
     init(
         month: Date,
@@ -136,6 +137,12 @@ struct MonthView<DateView>: View where DateView: View {
             ForEach(weeks, id: \.self) { week in
                 WeekView(week: week, content: self.content)
             }
+            ZStack{
+                if parameters.selectedDate != nil{
+                    DayOverView()
+                        
+                }
+            }.animation(.easeInOut(duration: 0.2))
         }
     }
     func isCurrentMonth()-> Bool{

@@ -19,6 +19,18 @@ extension Date{
     }
 }
 
+extension Int: VectorArithmetic{
+    public mutating func scale(by rhs: Double) {
+        self = self*Int(rhs)
+    }
+    
+    public var magnitudeSquared: Double {
+        Double(self*self)
+    }
+    
+    
+}
+
 //extension Text{
 //    func GravesendSans(size : CGFloat)->Text{
 //        self

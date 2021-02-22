@@ -19,6 +19,8 @@
 		BD79F8F825DFC28F00097FA3 /* CalendarListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8E625DF9C4A00097FA3 /* CalendarListView.swift */; };
 		BD79F90125E0210600097FA3 /* Calendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F90025E0210600097FA3 /* Calendar.swift */; };
 		BD79F90F25E1796E00097FA3 /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F90E25E1796E00097FA3 /* ScrollView.swift */; };
+		BD79F91425E206B600097FA3 /* OnAnimationEnds.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F91325E206B600097FA3 /* OnAnimationEnds.swift */; };
+		BD79F91725E2AF2200097FA3 /* DayOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F91625E2AF2200097FA3 /* DayOverView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		BD79F8F325DF9F0E00097FA3 /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
 		BD79F90025E0210600097FA3 /* Calendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calendar.swift; sourceTree = "<group>"; };
 		BD79F90E25E1796E00097FA3 /* ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
+		BD79F91325E206B600097FA3 /* OnAnimationEnds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnAnimationEnds.swift; sourceTree = "<group>"; };
+		BD79F91625E2AF2200097FA3 /* DayOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOverView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,8 @@
 				BD79F8E625DF9C4A00097FA3 /* CalendarListView.swift */,
 				BD79F90025E0210600097FA3 /* Calendar.swift */,
 				BD79F8EA25DF9E3400097FA3 /* MonthlyView.swift */,
+				BD79F91625E2AF2200097FA3 /* DayOverView.swift */,
+				BD79F91325E206B600097FA3 /* OnAnimationEnds.swift */,
 				BD79F8ED25DF9E6D00097FA3 /* DailyView.swift */,
 				BD79F8F025DF9E9700097FA3 /* SettingsView.swift */,
 				BD79F8F325DF9F0E00097FA3 /* Structs.swift */,
@@ -171,7 +177,9 @@
 				BD79F8EE25DF9E6D00097FA3 /* DailyView.swift in Sources */,
 				BD79F8D525DF99C500097FA3 /* ContentView.swift in Sources */,
 				BD79F90125E0210600097FA3 /* Calendar.swift in Sources */,
+				BD79F91425E206B600097FA3 /* OnAnimationEnds.swift in Sources */,
 				BD79F8D325DF99C500097FA3 /* TimepageApp.swift in Sources */,
+				BD79F91725E2AF2200097FA3 /* DayOverView.swift in Sources */,
 				BD79F8E425DF9B9F00097FA3 /* Parameters.swift in Sources */,
 				BD79F8EB25DF9E3400097FA3 /* MonthlyView.swift in Sources */,
 			);
