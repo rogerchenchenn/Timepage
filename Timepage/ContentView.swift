@@ -10,14 +10,21 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var dateOfTruth:Date = Date()
-    @State private var show: Bool = false
+    @State private var showMonthCalendar: Bool = false
+    @State private var showDailyView: Bool = false
     @State private var currentOffsetMonth: Int = 0
     
     var body: some View {
         ZStack{
             HStack{
-                MonthlyView(currentOffsetMonth: $currentOffsetMonth)
-                CalendarListView(currentOffsetMonth: $currentOffsetMonth)
+                if showMonthCalendar{
+                    MonthlyView(currentOffsetMonth: $currentOffsetMonth)
+                }
+                CalendarListView(currentOffsetMonth: $currentOffsetMonth, showMonthCalendar: $showDailyView)
+//                DailyView()
+            }
+            if showDailyView{
+                DailyView()
             }
             
         }.background(Color.black).ignoresSafeArea().frame(maxWidth:.infinity, maxHeight: .infinity)

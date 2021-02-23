@@ -31,7 +31,7 @@ struct DayOverView: View {
             }.id(getDateDiscription(parameters.selectedDate))
             .padding(.top, 5)
             .padding(.vertical, 5)
-            .opacity(events.isEmpty ? 0 : 1)
+//            .opacity(events.isEmpty ? 0 : 1)
             
             VStack{
                 ForEach(events, id: \.self){ event in
@@ -39,7 +39,7 @@ struct DayOverView: View {
                 }
             }
         }.onChange(of: parameters.selectedDate, perform: {_ in getEvents()})
-        .onAppear(perform: getEvents)
+        .onAppear(perform: getEvents).opacity(Show())
     }
     
     
@@ -52,17 +52,13 @@ struct DayOverView: View {
         }else if calendar.isDateInYesterday(date){
             return "YESTERDAY"
         }else{
-            return date.format("EEEE MMMM dd").uppercased()
+            return date.format("EEEE MMMM d").uppercased()
         }
     }
     
     func getDateDistance(_ dt: Date?)-> String{
         guard let date = dt else {return ""}
-        if calendar.isDateInToday(date){
-            return ""
-        }else if calendar.isDateInTomorrow(date){
-            return ""
-        }else if calendar.isDateInYesterday(date){
+        if calendar.isDateInToday(date) || calendar.isDateInTomorrow(date) || calendar.isDateInYesterday(date){
             return ""
         }else{
             let today = calendar.startOfDay(for: Date())
@@ -75,6 +71,10 @@ struct DayOverView: View {
                 return "\(abs(daysApart)) DAYS FROM TODAY"
             }
         }
+    }
+    func Show()-> Double{
+        guard self.parameters.selectedDate != nil, calendar.isDate(underMonth, equalTo: parameters.selectedDate!, toGranularity: .month) else { return 0 }
+        return 1
     }
     
     func getEvents(){

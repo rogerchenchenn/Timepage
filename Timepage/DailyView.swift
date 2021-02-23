@@ -9,12 +9,34 @@ import SwiftUI
 
 struct DailyView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView{
+            DailyViewContent(date: Date()).onTapGesture {
+                
+            }
+            NavigationLink("tap me", destination: DailyViewContent(date: Date().advanced(by: 24*60*60)))
+        }.navigationViewStyle(DoubleColumnNavigationViewStyle())
     }
 }
 
 struct DailyView_Previews: PreviewProvider {
     static var previews: some View {
         DailyView()
+    }
+}
+
+struct DailyViewContent: View {
+    let date: Date
+    var body: some View {
+        ZStack{
+            HStack{
+                Image(systemName: "xmark")
+                VStack(spacing: 0){
+                    Text("\(date.format("EEEE").uppercased())").font(.largeTitle).fontWeight(.medium)
+                        .kerning(3)
+                    Text("\(date.format("MMMM d"))").font(.body).fontWeight(.light)
+                }
+                Image(systemName: "plus")
+            }
+        }
     }
 }

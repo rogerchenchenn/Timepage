@@ -14,6 +14,7 @@ struct CalendarListView: View {
     
     @State private var localMonth: Int = 0
     @Binding var currentOffsetMonth: Int
+    @Binding var showMonthCalendar: Bool
     let daySpan: Int = 60
     
     var body: some View {
@@ -26,10 +27,14 @@ struct CalendarListView: View {
                         .font(.body)
                         .fontWeight(.medium)
                         .kerning(7)
-                        .frame(width:400)
+                        .frame(width:400).contentShape(Rectangle())
                         .rotationEffect(.degrees(270))
                         .foregroundColor(parameters.highlightColor).frame(width:30)
-                        .animation(.spring())
+                        .animation(.spring()).onTapGesture {
+                            withAnimation(.default){
+                            showMonthCalendar.toggle()
+                            }
+                        }
                     ScrollView(showsIndicators: false, offsetChanged: {updateCurrentPosition($0, fullHeight: fullView.size.height)}){
                         LazyVStack(spacing:0){
                             ForEach(-daySpan..<daySpan){ offsetDay in
@@ -105,7 +110,7 @@ struct CalendarListView: View {
 
 struct CalendarListView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarListView(currentOffsetMonth: Binding.constant(0)).environmentObject(appParameters())
+        CalendarListView(currentOffsetMonth: Binding.constant(0), showMonthCalendar: Binding.constant(false)).environmentObject(appParameters())
     }
 }
 
