@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import EventKit
 
 extension Date{
     func format(_ format:String) -> String {
@@ -30,6 +31,17 @@ extension Int: VectorArithmetic{
     
     
 }
+
+extension EKEvent{
+    var id: String{
+        if let title = self.title{
+            return title
+        }else{
+            return UUID().uuidString
+        }
+    }
+}
+
 
 //extension Text{
 //    func GravesendSans(size : CGFloat)->Text{

@@ -13,6 +13,8 @@ struct CalendarListView: View {
     @Environment(\.calendar) var calendar
     
     @State private var localMonth: Int = 0
+    @State private var showDailyView: Bool = false
+    @State private var choosenDate: Date = Date()
     @Binding var currentOffsetMonth: Int
     @Binding var showMonthCalendar: Bool
     let daySpan: Int = 60
@@ -32,13 +34,19 @@ struct CalendarListView: View {
                         .foregroundColor(parameters.highlightColor).frame(width:30)
                         .animation(.spring()).onTapGesture {
                             withAnimation(.default){
-                            showMonthCalendar.toggle()
+//                            showMonthCalendar.toggle()
+                                showMonthCalendar.toggle()
                             }
                         }
                     ScrollView(showsIndicators: false, offsetChanged: {updateCurrentPosition($0, fullHeight: fullView.size.height)}){
                         LazyVStack(spacing:0){
                             ForEach(-daySpan..<daySpan){ offsetDay in
-                                DayView(date: getDay(offsetDay), isToday: offsetDay==0).id(offsetDay)
+                                DayView(date: getDay(offsetDay), isToday: offsetDay==0).id(offsetDay).contentShape(Rectangle()).onTapGesture{
+                                    withAnimation(.default){
+                                        choosenDate = getDay(offsetDay)
+                                        showDailyView.toggle()
+                                    }
+                                }
                             }
                         }
                     }
@@ -52,6 +60,16 @@ struct CalendarListView: View {
                         }
                     }.frame(width:50, height: 50).padding(.bottom, 20)
                 }
+                    ZStack{
+                    if showDailyView{
+                        HStack(spacing: 0){
+                            if showMonthCalendar{
+                                Color.clear.frame(width: 30, height: 1)
+                            }
+                            DailyView(showingSelf: $showDailyView, date: choosenDate)
+                        }
+                    }
+                    }
                 }.onAppear(){
                     withAnimation(.default){
                         scroll.scrollTo(0, anchor: .center)
@@ -124,7 +142,7 @@ struct DayView: View {
     @State private var currentIndex: Int = 0
     
     let delayTime: Double = 5
-    let timer = Timer.publish(every: 5,tolerance: 1, on: .main, in: .common).autoconnect()
+//    let timer = Timer.publish(every: 5,tolerance: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         
@@ -136,9 +154,6 @@ struct DayView: View {
             .padding(.horizontal, 5)
             .frame(minWidth: 50,maxHeight:.infinity)
             .background(Color.black)
-            .onTapGesture {
-                currentIndex += 1
-            }
             
             if isToday{
                 Capsule().frame(width:2).foregroundColor(parameters.highlightColor).offset(x:-1)
@@ -159,10 +174,9 @@ struct DayView: View {
             Rectangle().frame(height:0.5).foregroundColor(.black).opacity(0.3)
         })
         .onAppear(perform: getEvents)
-        .onReceive(timer){ _ in
-//            print("recieved timer")
+        .onReceive(parameters.timer){ _ in
+            print("recieved timer for \(events.first?.title)")
             if events.count<2{
-                timer.upstream.connect().cancel()
                 return
             }
 
@@ -215,9 +229,9 @@ struct EventBlock: View {
                 }else{
                     HStack(spacing: 0){
                         Group{
-                            Text(event.startDate.format("HH:mm a")).fontWeight(.light)
+                            Text(event.startDate.format("h:mm a")).fontWeight(.light)
                             Text(" ⟶ ").baselineOffset(2).fontWeight(.light)
-                            Text(event.endDate.format("HH:mm a")).fontWeight(.light)
+                            Text(event.endDate.format("h:mm a")).fontWeight(.light)
                             
                             if event.location != nil{
                                 Text("  \(event.location!)").fontWeight(.light).lineLimit(1)

@@ -20,9 +20,9 @@ class appParameters: ObservableObject{
     
     @Published var selectedDate: Date? = Date()
     
-    
-    
     @Published var EventStore = EKEventStore()
+    
+    let timer = Timer.publish(every: 5,tolerance: 1, on: .main, in: .common).autoconnect()
     
     init() {
         let store = EKEventStore()
