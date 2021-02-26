@@ -42,6 +42,43 @@ extension EKEvent{
     }
 }
 
+extension EKCalendar{
+    var isShowing: Bool{
+        get{
+            UserDefaults().bool(forKey: self.calendarIdentifier)
+        }
+        set{
+            UserDefaults().setValue(newValue, forKey: self.calendarIdentifier)
+        }
+            
+    }
+}
+
+
+public extension View {
+    func OnScenePhaseChange(phase: ScenePhase, action: @escaping () -> ()) -> some View
+    {
+        self.modifier( OnScenePhaseChangeModifier(phase: phase, action: action) )
+    }
+}
+
+public struct OnScenePhaseChangeModifier: ViewModifier {
+    @Environment(\.scenePhase) private var scenePhase
+    
+    public let phase: ScenePhase
+    
+    public let action: () -> ()
+    
+    public func body(content: Content) -> some View {
+        content
+            .onChange(of: scenePhase) { phase in
+                if (phase == phase) {
+                    action()
+                }
+            }
+    }
+}
+
 
 //extension Text{
 //    func GravesendSans(size : CGFloat)->Text{
@@ -59,9 +96,35 @@ enum weekDays:String, CaseIterable{
     case Friday = "FRI"
     case Saturday = "SAT"
 }
+extension Color{
+    
+}
 
 extension Color {
-    init(hex: String) {
+    var hexString: String{
+        if let components = self.cgColor?.components{
+            let r = components[0]*255
+            let g = components[1]*255
+            let b = components[2]*255
+            return String(format:"%02X", Int(r)) + String(format:"%02X", Int(g)) + String(format:"%02X", Int(b))
+        }else{
+            return "FFFFFF"
+        }
+    }
+    
+    var colorSpace: String{
+        if let cgColor = self.cgColor, let space = cgColor.colorSpace?.name{
+            print(space as String)
+            return space as String
+        }else{
+            return "kCGColorSpaceSRGB"
+        }
+    }
+}
+
+
+extension Color {
+    init(hex: String, colorSpace: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
@@ -77,8 +140,13 @@ extension Color {
             (a, r, g, b) = (1, 1, 1, 0)
         }
         
+        var space: Color.RGBColorSpace = .sRGB
+        if colorSpace == "kCGColorSpaceDisplayP3"{
+            space = .displayP3
+        }
+        
         self.init(
-            .sRGB,
+            space,
             red: Double(r) / 255,
             green: Double(g) / 255,
             blue:  Double(b) / 255,

@@ -16,7 +16,7 @@ struct DailyView: View {
     @Binding var showingSelf: Bool
     
     let daySpan = 60
-    @State var date: Date
+    @Binding var date: Date
     @State private var showEvent: Bool = false
     @State private var selectedEvent: EKEvent? = nil
     @State private var allDayEvents: [EKEvent] = []
@@ -35,7 +35,7 @@ struct DailyView: View {
                                     Text("\(date.format("MMMM d"))").font(.callout).fontWeight(.light)
                                         .kerning(1)
                                 }.padding(.bottom, 30).foregroundColor(.white)
-                                .onAppear(perform: getEvents )
+                                .onChange(of: date, perform: {_ in getEvents()})
                             }.foregroundColor(.white)
                             Spacer()
                             ScrollView(){
@@ -46,8 +46,10 @@ struct DailyView: View {
                                         ForEach(allDayEvents, id: \.self){ event in
                                             RoundedEventBlock(event, schedule: false)
                                                 .onTapGesture {
+                                                    withAnimation(.easeInOut(duration: 0.2) ){
                                                     showEvent = true
                                                 selectedEvent = event
+                                                    }
                                             }
                                         }
                                     }.foregroundColor(.white).padding(.bottom, 40)
@@ -75,7 +77,8 @@ struct DailyView: View {
                     
                     VStack{
                         HStack{
-                            Image(systemName: "arrow.left").onTapGesture {
+                            Image(systemName: "arrow.left").contentShape(Rectangle())
+                                .onTapGesture {
                                 withAnimation(.default){
                                     showingSelf.toggle()
                                 }
@@ -129,7 +132,7 @@ struct DailyView: View {
                     }
                 }
                 DispatchQueue.main.async {
-                    withAnimation(.default){
+                    withAnimation(.none){
                         self.allDayEvents = allDay
                         self.scheduledEvents = scheduled
                     }
@@ -145,7 +148,8 @@ struct DailyView: View {
             HStack{
                 Spacer()
                 VStack{
-                    Text(event.title).font(.title).fontWeight(.light).kerning(1)
+                    Text(event.title).font(.title).fontWeight(.light).kerning(1).multilineTextAlignment(.center)
+                        .padding(.horizontal, 10)
                     if schedule{
                         HStack(spacing: 0){
                             Text(event.startDate.format("HH:mm a")).fontWeight(.light)
@@ -156,14 +160,14 @@ struct DailyView: View {
                 }
                 Spacer()
             }
-        }.frame(height: 80).frame(maxWidth: 500)
+        }.frame(height: 80).frame(maxWidth: 500).animation(.default)
     }
     
 }
 
 struct DailyView_Previews: PreviewProvider {
     static var previews: some View {
-        DailyView(showingSelf: Binding.constant(true), date: Date())
+        DailyView(showingSelf: Binding.constant(true), date: .constant(Date()))
     }
 }
 

@@ -8,8 +8,6 @@
 import SwiftUI
 import Combine
 
-var pushViewingDate = PassthroughSubject< Int, Never >()
-
 struct MonthlyView: View {
     
     @Environment(\.calendar) var calendar
@@ -18,10 +16,10 @@ struct MonthlyView: View {
     
     
     @State private var month: Date = Date()
-    @Binding var currentOffsetMonth: Int
     @State private var opacityDictionary: [Date:Int] = [:]
     
-    
+    @Binding var currentOffsetMonth: Int
+    @Binding var pushViewingDate: PassthroughSubject< Int, Never >
     
     private let skipThreshold: CGFloat = 10
     private let monthSpan: Int = 6
@@ -100,7 +98,7 @@ struct MonthlyView: View {
 
 struct MonthlyView_Previews: PreviewProvider {
     static var previews: some View {
-        MonthlyView(currentOffsetMonth: Binding.constant(0)).environmentObject(appParameters()).frame(width: 300, height: 400).background(Color.black)
+        MonthlyView(currentOffsetMonth: Binding.constant(0), pushViewingDate: .constant(PassthroughSubject< Int, Never >())).environmentObject(appParameters()).frame(width: 300, height: 400).background(Color.black)
     }
 }
 

@@ -7,80 +7,95 @@
 
 import SwiftUI
 import EventKit
+import Combine
 
 struct CalendarListView: View {
     @EnvironmentObject var parameters: appParameters
     @Environment(\.calendar) var calendar
+    @Environment(\.scenePhase) var scenePhase
     
     @State private var localMonth: Int = 0
     @State private var showDailyView: Bool = false
     @State private var choosenDate: Date = Date()
+    @State private var scenePhasePublisher = PassthroughSubject< ScenePhase , Never >()
+    @State private var todayIsShowing: (inView: Bool, earlier: Bool) = (true, false)
+    
     @Binding var currentOffsetMonth: Int
     @Binding var showMonthCalendar: Bool
+    @Binding var pushViewingDate: PassthroughSubject< Int, Never >
+    //    @Binding var scenePhasePublisher: PassthroughSubject< ScenePhase, Never >
     let daySpan: Int = 60
     
     var body: some View {
         Group{
             GeometryReader{ fullView in
-            ScrollViewReader{ scroll in
-                ZStack{
-                HStack(spacing: 0){
-                    Text("\(getMonth(currentOffsetMonth).format("MMMM yyyy").uppercased())")
-                        .font(.body)
-                        .fontWeight(.medium)
-                        .kerning(7)
-                        .frame(width:400).contentShape(Rectangle())
-                        .rotationEffect(.degrees(270))
-                        .foregroundColor(parameters.highlightColor).frame(width:30)
-                        .animation(.spring()).onTapGesture {
-                            withAnimation(.default){
-//                            showMonthCalendar.toggle()
-                                showMonthCalendar.toggle()
-                            }
-                        }
-                    ScrollView(showsIndicators: false, offsetChanged: {updateCurrentPosition($0, fullHeight: fullView.size.height)}){
-                        LazyVStack(spacing:0){
-                            ForEach(-daySpan..<daySpan){ offsetDay in
-                                DayView(date: getDay(offsetDay), isToday: offsetDay==0).id(offsetDay).contentShape(Rectangle()).onTapGesture{
+                ScrollViewReader{ scroll in
+                    ZStack{
+                        HStack(spacing: 0){
+                            Text("\(getMonth(currentOffsetMonth).format("MMMM yyyy").uppercased())")
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .kerning(7)
+                                .frame(width:400).contentShape(Rectangle())
+                                .rotationEffect(.degrees(270))
+                                .foregroundColor( isCurrentMonth() ? parameters.highlightColor : .white).frame(width:30)
+                                .animation(.spring()).onTapGesture {
                                     withAnimation(.default){
-                                        choosenDate = getDay(offsetDay)
-                                        showDailyView.toggle()
+                                        //                            showMonthCalendar.toggle()
+                                        showMonthCalendar.toggle()
+                                    }
+                                }
+                            ScrollView(showsIndicators: false, offsetChanged: {updateCurrentPosition($0, fullHeight: fullView.size.height)}){
+                                LazyVStack(spacing:0){
+                                    ForEach(-daySpan..<daySpan){ offsetDay in
+                                        DayView(date: getDay(offsetDay), isToday: offsetDay==0, scenePhasePublisher: $scenePhasePublisher).id(offsetDay).contentShape(Rectangle()).onTapGesture{
+                                            withAnimation(.default){
+                                                choosenDate = getDay(offsetDay)
+                                                showDailyView.toggle()
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                VStack{
-                    Spacer()
-                    Circle().foregroundColor(parameters.highlightColor).overlay(Image(systemName: "chevron.up").font(.system(size: 30, weight: .thin, design: .default)).foregroundColor(.white)).onTapGesture {
+                        VStack{
+                            Spacer()
+                            Circle().foregroundColor(parameters.highlightColor)
+                                .overlay(Image(systemName: todayIsShowing.earlier ? "chevron.down" : "chevron.up")
+                                            .font(.system(size: 30, weight: .thin, design: .default))
+                                            .foregroundColor(.white))
+                                .onTapGesture {
+                                    withAnimation(.default){
+                                        scroll.scrollTo(0, anchor: .center)
+                                        pushViewingDate.send(0)
+                                    }
+                                }.frame(width:50, height: 50).offset(y: todayIsShowing.inView ? 100 : 0)
+                                .padding(.bottom, 20)
+                                .animation(.spring())
+                        }
+                        ZStack{
+                            //                    if showDailyView{
+                            HStack(spacing: 0){
+                                if showMonthCalendar{
+                                    Color.clear.frame(width: 30, height: 1)
+                                }
+                                DailyView(showingSelf: $showDailyView, date: $choosenDate)
+                            }
+                            //                    }
+                        }.offset(x: showDailyView ? 0 : fullView.size.width).animation(.spring(response: 0.34, dampingFraction: 0.75, blendDuration: 0.3))
+                    }.onAppear(){
                         withAnimation(.default){
                             scroll.scrollTo(0, anchor: .center)
-                            pushViewingDate.send(0)
-                        }
-                    }.frame(width:50, height: 50).padding(.bottom, 20)
-                }
-                    ZStack{
-                    if showDailyView{
-                        HStack(spacing: 0){
-                            if showMonthCalendar{
-                                Color.clear.frame(width: 30, height: 1)
+                            pushViewingDate.send(-6)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                pushViewingDate.send(0)
                             }
-                            DailyView(showingSelf: $showDailyView, date: choosenDate)
-                        }
-                    }
-                    }
-                }.onAppear(){
-                    withAnimation(.default){
-                        scroll.scrollTo(0, anchor: .center)
-                        pushViewingDate.send(-6)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            pushViewingDate.send(0)
                         }
                     }
                 }
             }
-        }
+        }.onChange(of: scenePhase){ phase in
+            scenePhasePublisher.send(phase)
         }
     }
     
@@ -104,20 +119,29 @@ struct CalendarListView: View {
     func updateCurrentPosition(_ point: CGPoint , fullHeight: CGFloat){
         let distance = -point.y/100 - CGFloat(daySpan)
         let offset = distance + fullHeight/200
-//        print("\(offset) \t \(Int(offset.rounded(.down)))")
+        todayIsShowing.inView = abs(offset) < fullHeight/200
+        todayIsShowing.earlier = offset<0
+        //        print("\(offset) \t \(Int(offset.rounded(.down)))")
         let offsetDays = Int(offset.rounded(.down))
         let date = getDay(offsetDays)
         guard let startOfTarget = calendar.dateInterval(of: .month, for: date)?.start else { return }
         guard let startOfThisMonth = calendar.dateInterval(of: .month, for: Date())?.start else { return }
         if let month = calendar.dateComponents([.month], from: startOfThisMonth, to: startOfTarget).month{
-//            print(date.format("MM/dd/yyyy") + "\t \(month)")
+            //            print(date.format("MM/dd/yyyy") + "\t \(month)")
             if month != localMonth{
                 print("from here month = \(month), offset = \(currentOffsetMonth)")
                 localMonth = month
-                pushViewingDate.send(month)
+                if showMonthCalendar{
+                    pushViewingDate.send(month)
+                }else{
+                    currentOffsetMonth = month
+                }
             }
             
         }
+    }
+    func isCurrentMonth()-> Bool{
+        return calendar.isDate(getMonth(currentOffsetMonth), equalTo: Date(), toGranularity: .month)
     }
     
     
@@ -128,12 +152,13 @@ struct CalendarListView: View {
 
 struct CalendarListView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarListView(currentOffsetMonth: Binding.constant(0), showMonthCalendar: Binding.constant(false)).environmentObject(appParameters())
+        CalendarListView(currentOffsetMonth: Binding.constant(0), showMonthCalendar: Binding.constant(false), pushViewingDate: .constant(PassthroughSubject< Int, Never >())).environmentObject(appParameters())
     }
 }
 
 struct DayView: View {
     @Environment(\.calendar) var calendar
+    @Environment(\.scenePhase) var scenePhase
     @EnvironmentObject var parameters: appParameters
     
     let date: Date
@@ -141,8 +166,10 @@ struct DayView: View {
     @State private var events: [EKEvent] = []
     @State private var currentIndex: Int = 0
     
+    @Binding var scenePhasePublisher: PassthroughSubject< ScenePhase, Never >
+    
     let delayTime: Double = 5
-//    let timer = Timer.publish(every: 5,tolerance: 1, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 5,tolerance: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         
@@ -159,12 +186,12 @@ struct DayView: View {
                 Capsule().frame(width:2).foregroundColor(parameters.highlightColor).offset(x:-1)
             }
             ZStack{
-            if !events.isEmpty{
-                EventBlock(event: events[Int(currentIndex)]).id(UUID())
+                if !events.isEmpty{
+                    EventBlock(event: events[Int(currentIndex)]).id(UUID())
                     
-            }else{
-                Spacer()
-            }
+                }else{
+                    Spacer()
+                }
             }.animation(.easeInOut(duration: 0.3))
         }
         
@@ -174,24 +201,38 @@ struct DayView: View {
             Rectangle().frame(height:0.5).foregroundColor(.black).opacity(0.3)
         })
         .onAppear(perform: getEvents)
-        .onReceive(parameters.timer){ _ in
-            print("recieved timer for \(events.first?.title)")
+        .onReceive(timer){ _ in
+            //            print("\(scenePhase) \t recieved timer from \(events.first?.title)")
             if events.count<2{
+                timer.upstream.connect().cancel()
                 return
             }
-
+            
             if currentIndex<events.count-1{
                 currentIndex += 1
             }else{
                 currentIndex = 0
             }
+        }.onReceive(scenePhasePublisher){ phase in
+            if phase != .active{
+                pauseTimer()
+            }else{
+                connectTimer()
+            }
         }
         
-        
+    }
+    func pauseTimer(){
+        //        print("paused")
+        timer.upstream.connect().cancel()
+    }
+    func connectTimer(){
+        //        print("connected")
+        let _ = timer.upstream.connect()
     }
     
     func getEvents(){
-//        print(date.format("MM-dd-yyyy HH:mm"))
+        //        print(date.format("MM-dd-yyyy HH:mm"))
         DispatchQueue.global(qos: .userInteractive).async {
             var components = DateComponents()
             components.day = 1
@@ -199,9 +240,9 @@ struct DayView: View {
             if let endOfDay = calendar.date(byAdding: components, to: date){
                 let predicate = parameters.EventStore.predicateForEvents(withStart: date, end: endOfDay, calendars: parameters.supportedCalendars)
                 let events = parameters.EventStore.events(matching: predicate)
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { 
                     withAnimation(.default){
-                    self.events = events
+                        self.events = events
                         currentIndex = 0
                     }
                 }

@@ -27,11 +27,11 @@ struct EventDetailView: View {
                         VStack(spacing: 20){
                             
                             Text(event.title).font(.title).fontWeight(.medium)
-                                .kerning(1)
-                                .padding(.bottom, 30)
+                                .kerning(1).multilineTextAlignment(.center)
+                                .padding(.bottom, 30).padding(.horizontal, 30)
                             VStack{
                                 Text(getTimeInterval()).font(.title).fontWeight(.light).kerning(1)
-                                Text(event.startDate.format("EEEE MMMM d").uppercased()).font(.body).fontWeight(.light)
+                                Text(event.startDate.format("EEEE MMMM d").uppercased()).font(.body).fontWeight(.light).kerning(1)
                             }
                             
                             Text(event.calendar.title.uppercased()).kerning(1)
@@ -43,7 +43,10 @@ struct EventDetailView: View {
                                 }).clipShape(RoundedRectangle(cornerRadius: 5)).padding(.vertical, 10)
                             
                             //map
-                            Map.init(coordinateRegion: .constant(getLocation())).frame(width: 200, height: 200).clipShape(Circle())
+                            if event.structuredLocation?.geoLocation != nil{
+                            Map.init(coordinateRegion: .init(get: {getLocation()}, set: {_ in }), interactionModes: .zoom )
+                                .frame(width: 200, height: 200).clipShape(Circle())
+                            }
                             
                             EventDetailBLock(Title: "LOCATION", content: event.location)
                             EventDetailBLock(Title: "NOTES", content: event.notes)
@@ -90,7 +93,7 @@ struct EventDetailView: View {
             return "\(event.startDate.format("h:mm a")) - \(event.endDate.format("h:mm a"))"
         }
     }
-    func getLocation()-> MKCoordinateRegion{
+    func getLocation()-> MKCoordinateRegion{ 
         if let coordinates = event.structuredLocation?.geoLocation{
             let location = MKCoordinateRegion.init(center: .init(latitude: coordinates.coordinate.latitude, longitude: coordinates.coordinate.longitude), span: MKCoordinateSpan.init(latitudeDelta: 0.01, longitudeDelta: 0.01))
             return location
@@ -144,13 +147,16 @@ struct EventDetailView_Previews: PreviewProvider {
 }
 struct EventDetailBLock: View {
     
+    @EnvironmentObject var parameters: appParameters
     let Title: String
     let content: String?
+    @State private var showTextField: Bool = false
+//    var event: EKEvent
     
     var body: some View {
         VStack{
             Text(Title).font(.title2).fontWeight(.medium).kerning(3)
-            Text(content ?? "CLICK TO ADD").font(.callout).fontWeight(.light).kerning(1)
+            Text(content ?? " - ").font(.callout).fontWeight(.light).kerning(1).multilineTextAlignment(.center)
                 .padding(.bottom, 20)
             Rectangle().foregroundColor(.black).opacity(0.1).frame(width: 70, height: 1)
         }.padding(.bottom, 10)

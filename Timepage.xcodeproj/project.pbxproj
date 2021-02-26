@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BD100C6C25E4F38C002BC753 /* TransparentBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD100C6B25E4F38C002BC753 /* TransparentBackground.swift */; };
 		BD100C7425E5031C002BC753 /* EventDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD100C7325E5031C002BC753 /* EventDetailView.swift */; };
 		BD79F8D325DF99C500097FA3 /* TimepageApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8D225DF99C500097FA3 /* TimepageApp.swift */; };
 		BD79F8D525DF99C500097FA3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F8D425DF99C500097FA3 /* ContentView.swift */; };
@@ -23,10 +22,10 @@
 		BD79F90F25E1796E00097FA3 /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F90E25E1796E00097FA3 /* ScrollView.swift */; };
 		BD79F91425E206B600097FA3 /* OnAnimationEnds.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F91325E206B600097FA3 /* OnAnimationEnds.swift */; };
 		BD79F91725E2AF2200097FA3 /* DayOverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD79F91625E2AF2200097FA3 /* DayOverView.swift */; };
+		BD8E864025E7ECCA000EBFD0 /* ClearBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8E863F25E7ECCA000EBFD0 /* ClearBackgroundView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		BD100C6B25E4F38C002BC753 /* TransparentBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentBackground.swift; sourceTree = "<group>"; };
 		BD100C7325E5031C002BC753 /* EventDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailView.swift; sourceTree = "<group>"; };
 		BD79F8CF25DF99C500097FA3 /* Timepage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Timepage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD79F8D225DF99C500097FA3 /* TimepageApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimepageApp.swift; sourceTree = "<group>"; };
@@ -45,6 +44,7 @@
 		BD79F90E25E1796E00097FA3 /* ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
 		BD79F91325E206B600097FA3 /* OnAnimationEnds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnAnimationEnds.swift; sourceTree = "<group>"; };
 		BD79F91625E2AF2200097FA3 /* DayOverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOverView.swift; sourceTree = "<group>"; };
+		BD8E863F25E7ECCA000EBFD0 /* ClearBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearBackgroundView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,8 +87,8 @@
 				BD79F91325E206B600097FA3 /* OnAnimationEnds.swift */,
 				BD79F8ED25DF9E6D00097FA3 /* DailyView.swift */,
 				BD100C7325E5031C002BC753 /* EventDetailView.swift */,
-				BD100C6B25E4F38C002BC753 /* TransparentBackground.swift */,
 				BD79F8F025DF9E9700097FA3 /* SettingsView.swift */,
+				BD8E863F25E7ECCA000EBFD0 /* ClearBackgroundView.swift */,
 				BD79F8F325DF9F0E00097FA3 /* Structs.swift */,
 				BD79F90E25E1796E00097FA3 /* ScrollView.swift */,
 				BD79F8D625DF99C700097FA3 /* Assets.xcassets */,
@@ -178,13 +178,13 @@
 			files = (
 				BD79F8F425DF9F0E00097FA3 /* Structs.swift in Sources */,
 				BD79F8F125DF9E9700097FA3 /* SettingsView.swift in Sources */,
-				BD100C6C25E4F38C002BC753 /* TransparentBackground.swift in Sources */,
 				BD79F8F825DFC28F00097FA3 /* CalendarListView.swift in Sources */,
 				BD79F90F25E1796E00097FA3 /* ScrollView.swift in Sources */,
 				BD79F8EE25DF9E6D00097FA3 /* DailyView.swift in Sources */,
 				BD100C7425E5031C002BC753 /* EventDetailView.swift in Sources */,
 				BD79F8D525DF99C500097FA3 /* ContentView.swift in Sources */,
 				BD79F90125E0210600097FA3 /* Calendar.swift in Sources */,
+				BD8E864025E7ECCA000EBFD0 /* ClearBackgroundView.swift in Sources */,
 				BD79F91425E206B600097FA3 /* OnAnimationEnds.swift in Sources */,
 				BD79F8D325DF99C500097FA3 /* TimepageApp.swift in Sources */,
 				BD79F91725E2AF2200097FA3 /* DayOverView.swift in Sources */,
