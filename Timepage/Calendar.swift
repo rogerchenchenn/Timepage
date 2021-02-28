@@ -69,7 +69,7 @@ struct WeekView<DateView>: View where DateView: View {
                     if self.calendar.isDate(self.week, equalTo: date, toGranularity: .month) {
                         self.content(date)
                     } else {
-                        self.content(date).opacity(0.1)
+                        self.content(date).hidden()
                     }
                 }
             }

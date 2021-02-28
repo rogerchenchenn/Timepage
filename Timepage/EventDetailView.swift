@@ -48,10 +48,10 @@ struct EventDetailView: View {
                                 .frame(width: 200, height: 200).clipShape(Circle())
                             }
                             
-                            EventDetailBLock(Title: "LOCATION", content: event.location)
-                            EventDetailBLock(Title: "NOTES", content: event.notes)
-                            EventDetailBLock(Title: "URL", content: event.url?.absoluteString)
-                            EventDetailBLock(Title: "AVAILABILITY", content: getAvailabity()?.uppercased())
+                            EventDetailBLock(type: .Location, eventID: event.eventIdentifier)
+                            EventDetailBLock(type: .Notes, eventID: event.eventIdentifier)
+                            EventDetailBLock(type: .URL, eventID: event.eventIdentifier)
+                            EventDetailBLock(type: .Availability, eventID: event.eventIdentifier)
                             HStack{
                                 Spacer()
                             }
@@ -102,23 +102,6 @@ struct EventDetailView: View {
             return location
         }
     }
-    func getAvailabity()-> String?{
-        let avail = event.availability
-        switch avail {
-        case .notSupported:
-            return "none"
-        case .busy:
-            return "busy"
-        case .free:
-            return "free"
-        case .tentative:
-            return "tentative"
-        case .unavailable:
-            return "unavailable"
-        @unknown default:
-            return nil
-        }
-    }
     
     func deleteThisEvent(){
         if (try? parameters.EventStore.remove(event, span: .thisEvent)) != nil{
@@ -148,17 +131,115 @@ struct EventDetailView_Previews: PreviewProvider {
 struct EventDetailBLock: View {
     
     @EnvironmentObject var parameters: appParameters
-    let Title: String
-    let content: String?
+    
+    let type: EKEventDetail
+    let eventID: String
+    
+    @State var content: String? = nil
     @State private var showTextField: Bool = false
-//    var event: EKEvent
     
     var body: some View {
         VStack{
-            Text(Title).font(.title2).fontWeight(.medium).kerning(3)
-            Text(content ?? " - ").font(.callout).fontWeight(.light).kerning(1).multilineTextAlignment(.center)
-                .padding(.bottom, 20)
+            Text(type.rawValue.uppercased()).font(.title2).fontWeight(.medium).kerning(3)
+                .onAppear(){getContent()}
+            if !showTextField{
+                Text(content ?? "TAP TO ADD").font(.callout).fontWeight(.light).kerning(1).multilineTextAlignment(.center)
+                    .padding(.bottom, 20)
+            }else{
+                TextField(type.rawValue.uppercased(), text: Binding.init(get: {content ?? ""}, set: {content = $0}), onCommit: {onCommit()})
+                    .textFieldStyle(RoundedBorderTextFieldStyle()).foregroundColor(.black).padding(.horizontal, 20)
+                    .frame(maxWidth: 400)
+            }
+            
             Rectangle().foregroundColor(.black).opacity(0.1).frame(width: 70, height: 1)
-        }.padding(.bottom, 10)
+        }.padding(.bottom, 10).contentShape(Rectangle()).onTapGesture {
+            if type == .Availability{
+                switchAvailaBility()
+            }else{
+                showTextField.toggle()
+            }
+        }
+    }
+    
+    func onCommit(){
+        if let changedEvent = parameters.EventStore.event(withIdentifier: eventID){
+            var updatedContent: String? = content
+            if content == ""{
+                updatedContent = nil
+                content = nil
+            }
+            switch type {
+            case .Location:
+                changedEvent.location = updatedContent
+            case .Notes:
+                changedEvent.notes = updatedContent
+            case .URL:
+                changedEvent.url = URL(string: updatedContent ?? "")
+            default:
+                showTextField.toggle()
+                return
+            }
+            
+            if let _ = try? parameters.EventStore.save(changedEvent, span: .thisEvent){
+                print("successfully updated event:(\(eventID)) with new content \(updatedContent)")
+            }
+        }
+        showTextField.toggle()
+    }
+    func switchAvailaBility() {
+        if let changedEvent = parameters.EventStore.event(withIdentifier: eventID){
+            if changedEvent.availability == .free{
+                changedEvent.availability = .busy
+                content = "BUSY"
+            }else{
+                changedEvent.availability = .free
+                content = "FREE"
+            }
+            if let _ = try? parameters.EventStore.save(changedEvent, span: .thisEvent){
+                print("successfully updated event:(\(eventID))")
+            }
+        }
+    }
+    func getContent(){
+        DispatchQueue.global(qos: .userInteractive).async {
+            if let event = parameters.EventStore.event(withIdentifier: eventID){
+                var result: String? = ""
+                switch type {
+                case .Location:
+                    result = event.location
+                case .Notes:
+                    result = event.notes
+                case .URL:
+                    result = event.url?.absoluteString
+                case .Availability:
+                    result = getAvailabity(event.availability)?.uppercased()
+                }
+                DispatchQueue.main.async {
+                    content = result
+                }
+            }
+        }
+        
+    }
+    func getAvailabity(_ avail: EKEventAvailability)-> String?{
+        switch avail {
+        case .notSupported:
+            return "none"
+        case .busy:
+            return "busy"
+        case .free:
+            return "free"
+        case .tentative:
+            return "tentative"
+        case .unavailable:
+            return "unavailable"
+        @unknown default:
+            return nil
+        }
     }
 }
+
+enum EKEventDetail:String{
+    case Location = "Location", Notes = "Notes", URL = "URL", Availability = "Availability"
+}
+

@@ -140,6 +140,7 @@ struct CalendarListView: View {
             
         }
     }
+    
     func isCurrentMonth()-> Bool{
         return calendar.isDate(getMonth(currentOffsetMonth), equalTo: Date(), toGranularity: .month)
     }

@@ -14,8 +14,8 @@ class appParameters: ObservableObject{
     
 //    @Published var baseColor: Color = Color.init(.displayP3, red: 82/255, green: 99/255, blue: 105/255, opacity: 1)
 //    @Published var highlightColor: Color = Color.init(.displayP3, red: 218/255, green: 185/255, blue: 103/255, opacity: 1)
-    @Published var baseColor: Color = Color.init(hex: UserDefaults.standard.string(forKey: "baseColor") ?? "FFFFFF", colorSpace: UserDefaults.standard.string(forKey: "baseColorSpace") ?? "SRGB")
-    @Published var highlightColor: Color = Color.init(hex: UserDefaults.standard.string(forKey: "highlightColor") ?? "000000", colorSpace: UserDefaults.standard.string(forKey: "highlightColorSpace") ?? "SRGB")
+    @Published var baseColor: Color = Color.init(hex: UserDefaults.standard.string(forKey: "baseColor") ?? "3F4447", colorSpace: UserDefaults.standard.string(forKey: "baseColorSpace") ?? "SRGB")
+    @Published var highlightColor: Color = Color.init(hex: UserDefaults.standard.string(forKey: "highlightColor") ?? "52AB92", colorSpace: UserDefaults.standard.string(forKey: "highlightColorSpace") ?? "SRGB")
     
     
     @Published var supportedCalendars: [EKCalendar]
