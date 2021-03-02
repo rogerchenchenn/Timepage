@@ -84,7 +84,7 @@ struct DailyView: View {
                                 }
                             }
                             Spacer()
-                            Image(systemName: "plus")
+                            Image(systemName: "plus").help("This feature hasn't been implemented")
                         }.font(.system(size: 24, weight: .thin )).foregroundColor(.white)
                         Spacer()
                     }

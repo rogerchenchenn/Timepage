@@ -15,22 +15,20 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>com.apple.security.personal-information</key>
-	<string></string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>I need to use it</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>let me use it please</string>
-	<key>NSContactsUsageDescription</key>
-	<string>might come in handy</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Gravesend Sanss.otf</string>
-	</array>
+	<key>NSCalendarsUsageDescription</key>
+	<string>For getting Calendar Events</string>
+	<key>NSContactsUsageDescription</key>
+	<string> </string>
+	<key>NSRemindersUsageDescription</key>
+	<string> </string>
+	<key>com.apple.security.personal-information</key>
+	<string></string>
 </dict>
 </plist>

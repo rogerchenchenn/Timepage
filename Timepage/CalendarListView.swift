@@ -215,6 +215,7 @@ struct DayView: View {
                 currentIndex = 0
             }
         }.onReceive(scenePhasePublisher){ phase in
+            print("recieve phase \(phase)")
             if phase != .active{
                 pauseTimer()
             }else{

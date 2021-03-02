@@ -17,6 +17,7 @@ struct MonthlyView: View {
     
     @State private var month: Date = Date()
     @State private var opacityDictionary: [Date:Int] = [:]
+    @State private var allDayEventDictionary: [Date:Int] = [:]
     
     @Binding var currentOffsetMonth: Int
     @Binding var pushViewingDate: PassthroughSubject< Int, Never >
@@ -33,7 +34,7 @@ struct MonthlyView: View {
                             ForEach(-monthSpan..<monthSpan+1){ offsetMonth in
 //                                VStack{
                                 MonthView(month: getMonth(offsetMonth) ){ date in
-                                    calendarItem(opacityDictionary: $opacityDictionary, date: date)
+                                    calendarItem(opacityDictionary: $opacityDictionary, allDayEventDictionary: $allDayEventDictionary, pushViewingDate: $pushViewingDate, date: date)
                                 }.onAppear(){getOpacityDictionary()}
                                     
 //                                }
@@ -81,13 +82,18 @@ struct MonthlyView: View {
                 let events = parameters.EventStore.events(matching: predicate)
                 
                 var opacityDict: [Date:Int] = [:]
+                var allDayDict: [Date:Int] = [:]
                 
                 for event in events{
                     let date = calendar.startOfDay(for: event.startDate)
                     opacityDict.updateValue((opacityDict[date] ?? 0) + 1, forKey: date)
+                    if event.isAllDay{
+                        allDayDict.updateValue(allDayDict[date] ?? 0 + 1, forKey: date)
+                    }
                 }
                 DispatchQueue.main.async {
                     opacityDictionary = opacityDict
+                    allDayEventDictionary = allDayDict
                 }
             }
         }
@@ -108,6 +114,8 @@ struct calendarItem: View {
     @EnvironmentObject var parameters: appParameters
     
     @Binding var opacityDictionary: [Date:Int]
+    @Binding var allDayEventDictionary: [Date:Int]
+    @Binding var pushViewingDate: PassthroughSubject< Int, Never >
     
     let date: Date
     @State private var fillOpacity : Double = 0
@@ -126,15 +134,17 @@ struct calendarItem: View {
                 .overlay(
                     Text(String(self.calendar.component(.day, from: date)))
                         .foregroundColor(calendar.isDateInToday(date) ? parameters.highlightColor : .white)
-                ).onTapGesture {
+                ).contentShape(Circle())
+                .onTapGesture {
                     self.parameters.selectedDate = date
+                    pushCurrentMonth()
                 }
                 .overlay(
                     Circle().stroke(lineWidth: 2.2).foregroundColor(.white)
                             .transition(.asymmetric(insertion: .scale(scale: 1.1), removal: .identity))
                         .scaleEffect(isSelected() ? 1.1 : 1)
                         .opacity(isSelected() ? 1 : 0)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.3, blendDuration: 1.3))
+                        .animation(.spring(response: 0.34, dampingFraction: 0.3, blendDuration: 0.3))
                 )
         }
     }
@@ -143,7 +153,7 @@ struct calendarItem: View {
         return 0.334*Double(num ?? 0)
     }
     func getStroke()->Double{
-        if let num = opacityDictionary[calendar.startOfDay(for: date)], !calendar.isDateInToday(date), num > 0{
+        if let num = allDayEventDictionary[calendar.startOfDay(for: date)], !calendar.isDateInToday(date), num > 0{
             return 1
         }else{
             return 0
@@ -152,6 +162,13 @@ struct calendarItem: View {
     func isSelected()-> Bool{
         guard let truth = parameters.selectedDate else { return false }
         return calendar.isDate(truth , equalTo: date, toGranularity: .day)
+    }
+    func pushCurrentMonth(){
+        guard let startOfTarget = calendar.dateInterval(of: .month, for: date)?.start else { return }
+        guard let startOfThisMonth = calendar.dateInterval(of: .month, for: Date())?.start else { return }
+        if let month = calendar.dateComponents([.month], from: startOfThisMonth, to: startOfTarget).month{
+            pushViewingDate.send(month)
+        }
     }
     
 }

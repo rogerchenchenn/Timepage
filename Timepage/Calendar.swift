@@ -82,7 +82,6 @@ struct MonthView<DateView>: View where DateView: View {
     @EnvironmentObject var parameters: appParameters
     
     
-    
     let month: Date
     let showHeader: Bool
     let content: (Date) -> DateView

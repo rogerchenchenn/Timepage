@@ -44,8 +44,8 @@ struct EventDetailView: View {
                             
                             //map
                             if event.structuredLocation?.geoLocation != nil{
-                            Map.init(coordinateRegion: .init(get: {getLocation()}, set: {_ in }), interactionModes: .zoom )
-                                .frame(width: 200, height: 200).clipShape(Circle())
+                                Map.init(coordinateRegion: .init(get: {getLocation()}, set: {_ in }), interactionModes: .zoom )
+                                    .frame(width: 200, height: 200).clipShape(Circle())
                             }
                             
                             EventDetailBLock(type: .Location, eventID: event.eventIdentifier)
@@ -181,7 +181,7 @@ struct EventDetailBLock: View {
             }
             
             if let _ = try? parameters.EventStore.save(changedEvent, span: .thisEvent){
-                print("successfully updated event:(\(eventID)) with new content \(updatedContent)")
+                print("successfully updated event:(\(eventID))")
             }
         }
         showTextField.toggle()
